@@ -1,6 +1,6 @@
 import express from 'express';
-import journey from './journey.js';
-import station from './station.js';
+import journey from './journey/index';
+import station from './station/index';
 
 const router = express.Router();
 
