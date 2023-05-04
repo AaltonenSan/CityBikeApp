@@ -1,0 +1,11 @@
+.App {
+  /* Background image by Heidi Strömberg / Helsinki Partners */
+  background-image: url('../public/City-bikes-on-Esplanade_HeidiStrömberg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.navbar-collapse {
+  text-align: center;
+}

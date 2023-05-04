@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', router);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 try {
   app.listen(port, (): void => {
     logger.info(`Backend running on port ${port}`);
