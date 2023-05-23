@@ -11,8 +11,10 @@ journey.get('/:id', (req, res, err) => {
 });
 
 journey.post('/', upload, (req, res, err) => {
-  if (req.file === undefined) {
-    res.status(400).send('Invalid file!');
+  if (!req.file) {
+    res.status(400).send('No file uploaded!');
+  } else if (!req.file.filename) {
+    res.status(400).send('Error uploading file!')
   } else {
     parseCsv(process.cwd() + '/tmp/uploads/' + req.file.filename);
     res.status(200).send('Successfull upload!')

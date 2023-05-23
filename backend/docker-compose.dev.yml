@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  database:
+    image: "postgres"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: citybike
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data/
+      - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+  server:
+    image: backend-dev
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 3001:3001
+    depends_on:
+      - database
+    environment:
+      - DB_URL=database
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+
+volumes:
+  dbdata:
+    driver: local
+  pgadmin_data:

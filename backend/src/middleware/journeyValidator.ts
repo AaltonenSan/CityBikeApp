@@ -22,10 +22,14 @@ const isValidInteger = (value: string, limit: number): boolean => {
   return true;
 }
 
+/** 
+ * Validate CSV row to be a valid City Bike journey, returns true or false
+ */
 const validateJourney = (row: string[]): boolean => {
   if (row.length !== 8) return false;
   const [departure, arrival, departureStationId, departureStationName, targetStationId, targetStationName, distance, duration] = row;
 
+  // If all checks are passed returns true
   if (validateJourneyTimes(departure, arrival)) {
     return (
       isValidInteger(departureStationId, 1) &&
@@ -34,6 +38,7 @@ const validateJourney = (row: string[]): boolean => {
       isValidInteger(duration, 10)
     );
   }
+
   return false;
 }
 

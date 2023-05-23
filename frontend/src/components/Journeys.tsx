@@ -10,7 +10,7 @@ export default function Journeys() {
             <th>Return</th>
             <th>Departure station</th>
             <th>Return station</th>
-            <th>Covered distance</th>
+            <th>Distance</th>
             <th>Duration</th>
           </tr>
         </thead>

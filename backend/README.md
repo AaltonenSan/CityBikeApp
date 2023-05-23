@@ -1,1 +1,1 @@
-# Backend with node.js and express
+# Backend with node.js, express and postgresql

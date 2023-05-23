@@ -1,9 +1,15 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
 import router from './routes/index';
+import helmet from 'helmet';
 import logger from './utils/logger';
 import cors from 'cors';
-const app: Application = express();
+
+dotenv.config()
+
+const app = express();
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 // Log incoming requests
@@ -20,6 +26,7 @@ app.use((req: Request, res: Response, next: Function) => {
   next();
 })
 
+// for testing only
 app.get('/', (req, res) => {
   res.status(200).send('Hello from node express backend!');
 });
