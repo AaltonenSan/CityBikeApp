@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Container, Table } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
-import { getAllStations } from "../services/StationService";
+import { getAllStations } from "../services/apiClient";
 import { Station } from '../types'
 
 export default function Stations() {

@@ -3,7 +3,7 @@ import { Col, Container, Row, Spinner } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import StationDetailTable from "../components/StationDetailTable";
 import StationMap from "../components/StationMap";
-import { getOneStation } from "../services/StationService";
+import { getOneStation } from "../services/apiClient";
 import { Station } from "../types";
 
 export default function StationDetails() {
@@ -30,7 +30,7 @@ export default function StationDetails() {
             <StationMap station={station} />
           </Col>
           <Col xs={12} md={6} className="p-0">
-            <div style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}>
+            <div style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}> {/* small block to get table and map lined */}
               <StationDetailTable station={station} />
             </div>
           </Col>

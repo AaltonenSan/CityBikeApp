@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS station (
 CREATE TABLE IF NOT EXISTS journey (
   id                  SERIAL PRIMARY KEY,
   departure           timestamp,
-  return              timestamp,
+  return_time         timestamp,
   dep_station_id      int,
   dep_station_name    varchar(100),
   ret_station_id      int,
