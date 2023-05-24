@@ -1,16 +1,19 @@
+import { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 
 export default function NavigationBar() {
+  const [expanded, setExpanded] = useState(false)
+
   return (
-    <Navbar bg="light" expand="sm">
+    <Navbar bg="light" expand="sm" expanded={expanded}>
       <Container>
         <Navbar.Brand as={Link} to='/'>Helsinki City Bikes</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
+          <Nav className="ms-auto" onClick={() => setExpanded(false)}>
             <Nav.Link as={Link} to='/'>
               Home
             </Nav.Link>

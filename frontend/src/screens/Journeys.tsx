@@ -2,8 +2,8 @@ import { Container, Table } from "react-bootstrap"
 
 export default function Journeys() {
   return (
-    <Container style={{ marginTop: '20px' }}>
-      <Table striped bordered responsive style={{ backgroundColor: 'rgba(255,255,255,0.9)' }}>
+    <Container className="mt-4">
+      <Table striped bordered responsive style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}>
         <thead>
           <tr>
             <th>Departure</th>
