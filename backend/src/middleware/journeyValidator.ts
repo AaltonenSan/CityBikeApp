@@ -33,7 +33,9 @@ const validateJourney = (row: JourneyCsv): boolean => {
       isValidInteger(row.dep_station_id, 1) &&
       isValidInteger(row.ret_station_id, 1) &&
       isValidInteger(row.distance, 10) &&
-      isValidInteger(row.duration, 10)
+      isValidInteger(row.duration, 10) &&
+      row.dep_station_name.length > 0 &&
+      row.ret_station_name.length > 0
     );
   }
 
