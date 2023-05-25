@@ -9,3 +9,29 @@
 .navbar-collapse {
   text-align: center;
 }
+
+.active>.page-link {
+  background-color: #ffc107 !important;
+  color: black !important;
+  border-color: black !important;
+}
+
+.page-link {
+  color: black !important;
+}
+
+.pagination>li>a:focus,
+.pagination>li>a:hover,
+.pagination>li>span:focus,
+.pagination>li>span:hover {
+  box-shadow: none;
+}
+
+.pagination>li>a:hover,
+.pagination>li>span:hover {
+  background-color: 'gray' !important;
+}
+
+.pagination>li>a:focus {
+  background-color: transparent;
+}

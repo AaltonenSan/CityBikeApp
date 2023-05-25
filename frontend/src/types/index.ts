@@ -19,6 +19,7 @@ export interface StationResponseData {
 }
 
 export interface Journey {
+  id?: number;
   departure: string,
   return_time: string,
   dep_station_id: number,

@@ -90,8 +90,13 @@ export const uploadStations = async (req: Request, res: Response) => {
   } else if (!req.file.filename) {
     res.status(400).send('Error uploading file!');
   } else {
-    parseCsv(process.cwd() + '/tmp/uploads/' + req.file.filename, 'station');
-    res.status(200).send('Successful upload!');
+    try {
+      parseCsv(process.cwd() + '/tmp/uploads/' + req.file.filename, 'station');
+      res.status(200).send('Successful upload!');
+    } catch (error: any) {
+      console.error(error.message);
+      res.status(500).json({ error: 'Error uploading file' });
+    }
   }
 }
 

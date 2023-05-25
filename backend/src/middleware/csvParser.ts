@@ -23,6 +23,7 @@ export const parseCsv = (csvUrl: string, filetype: string) => {
 
   let collectionCsv: Journey[] | Station[] = [];
   let invalidRows: number = 0;
+
   fs.createReadStream(csvUrl)
     .pipe(fastCsv.parse({ headers: filetype === 'journey' ? journeyHeaders : true }))
     .on('data', (data: any) => {
@@ -46,8 +47,9 @@ export const parseCsv = (csvUrl: string, filetype: string) => {
           await insertStations(collectionCsv as Station[])
         }
         fs.unlinkSync(csvUrl);
-      } catch (error) {
-        console.error(error)
+      } catch (error: any) {
+        console.error(error.message);
+        throw error;
       }
     })
 }
