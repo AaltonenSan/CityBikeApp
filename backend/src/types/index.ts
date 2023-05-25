@@ -21,7 +21,7 @@ export interface JourneyCsv {
 }
 
 export interface Station {
-  FID: number,
+  FID?: number,
   ID: number,
   Nimi: string,
   Namn: string,

@@ -62,10 +62,10 @@ export const getOneStation = async (req: Request, res: Response) => {
 export const addNewStation = async (req: Request, res: Response) => {
   try {
     const {
-      id, nimi, namn,
-      name, osoite, adress,
-      kaupunki, stad, operaattor,
-      kapasiteet, x, y
+      ID, Nimi, Namn,
+      Name, Osoite, Adress,
+      Kaupunki, Stad, Operaattor,
+      Kapasiteet, x, y
     } = req.body;
 
     const insertQuery = `
@@ -74,7 +74,7 @@ export const addNewStation = async (req: Request, res: Response) => {
       RETURNING *`;
 
     const insertResult = await pool.query(insertQuery, [
-      id, nimi, namn, name, osoite, adress, kaupunki, stad, operaattor, kapasiteet, x, y
+      ID, Nimi, Namn, Name, Osoite, Adress, Kaupunki, Stad, Operaattor, Kapasiteet, x, y
     ])
     res.json(insertResult.rows[0]);
   } catch (error: any) {
