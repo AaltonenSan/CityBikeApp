@@ -28,15 +28,8 @@ export default function Stations() {
     fetchData()
   }, [])
 
+  // Navigate to station details page
   const handleClick = (id: number) => navigate('/station', { state: { id: id } })
-
-  const TitleWithSearch = (title: string) => {
-    return (
-      <div className="d-flex justify-content-between align-items-center">
-        {title} <FaSearch onClick={title === 'Name' ? () => setSearchByName(true) : () => setSearchByAddress(true)} />
-      </div>
-    )
-  }
 
   const closeSearch = () => {
     setSearchByName(false)
@@ -45,6 +38,16 @@ export default function Stations() {
     setAddress('')
   }
 
+  // Column title with search icon
+  const TitleWithSearch = (title: string) => {
+    return (
+      <div className="d-flex justify-content-between align-items-center">
+        {title} <FaSearch onClick={title === 'Name' ? () => setSearchByName(true) : () => setSearchByAddress(true)} />
+      </div>
+    )
+  }
+
+  // Column title with search input
   const SearchInput = (type: string) => {
     return (
       <div className="d-flex justify-content-between align-items-center">
@@ -56,6 +59,7 @@ export default function Stations() {
     )
   }
 
+  // Filter stations by name or address
   const search = (stations: Station[]) => {
     if (name) {
       return stations.filter(station => station.nimi.toLowerCase().includes(name.toLowerCase()))
@@ -66,13 +70,11 @@ export default function Stations() {
     }
   }
 
+  // Pagination settings
   const limit = 10 // stations shown per page
-  const lastPage = Math.ceil(search(stations).length / limit)
-  console.log(lastPage)
-
+  const lastPage = Math.ceil(search(stations).length / limit) // set the last page according to search results
   const lastIndex = page * limit
   const firstIndex = lastIndex - limit
-
   const paginatedStations = search(stations).slice(firstIndex, lastIndex)
 
   return (
