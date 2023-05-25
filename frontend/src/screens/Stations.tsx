@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { Container, Table } from "react-bootstrap"
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "../components/PaginationControls";
@@ -15,6 +15,7 @@ export default function Stations() {
   const [address, setAddress] = useState('')
   const [page, setPage] = useState(1);
   const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +29,35 @@ export default function Stations() {
     fetchData()
   }, [])
 
+  // Focus on search input when search is clicked
+  useEffect(() => {
+    if (searchByName || searchByAddress) {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
+  }, [searchByName, searchByAddress]);
+
   // Navigate to station details page
   const handleClick = (id: number) => navigate('/station', { state: { id: id } })
+
+  const handleNameSearch = () => {
+    setSearchByName(true);
+    setSearchByAddress(false);
+    setAddress('')
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  };
+
+  const handleAddressSearch = () => {
+    setSearchByAddress(true);
+    setSearchByName(false);
+    setName('')
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  };
 
   const closeSearch = () => {
     setSearchByName(false)
@@ -39,25 +67,32 @@ export default function Stations() {
   }
 
   // Column title with search icon
-  const TitleWithSearch = (title: string) => {
+  const TitleWithSearch = (title: string, handleClick: React.MouseEventHandler<SVGElement>) => {
     return (
       <div className="d-flex justify-content-between align-items-center">
-        {title} <FaSearch onClick={title === 'Name' ? () => setSearchByName(true) : () => setSearchByAddress(true)} />
+        {title} <FaSearch onClick={handleClick} />
       </div>
     )
   }
 
   // Column title with search input
-  const SearchInput = (type: string) => {
+  const SearchInput = (type: string, inputRef: React.RefObject<HTMLInputElement>) => {
+    const inputValue = type === 'name' ? name : address
+    const handleChange = type === 'name' ? setName : setAddress
+
     return (
       <div className="d-flex justify-content-between align-items-center">
-        <input type="text" placeholder={`Search by ${type}`} value={type === 'name' ? name : address}
-          onChange={type === 'name' ? (e) => setName(e.target.value) : (e) => setAddress(e.target.value)}
+        <input
+          type="text"
+          placeholder={`Search by ${type}`}
+          value={inputValue}
+          onChange={(e) => handleChange(e.target.value)}
+          ref={inputRef}
         />
-        <AiOutlineClose onClick={() => closeSearch()} />
+        <AiOutlineClose onClick={closeSearch} />
       </div>
-    )
-  }
+    );
+  };
 
   // Filter stations by name or address
   const search = (stations: Station[]) => {
@@ -83,10 +118,10 @@ export default function Stations() {
         <thead>
           <tr>
             <th style={{ width: '270px', height: '46px' }}>
-              {searchByName ? SearchInput('name') : TitleWithSearch('Name')}
+              {searchByName ? SearchInput('name', inputRef) : TitleWithSearch('Name', handleNameSearch)}
             </th>
             <th style={{ width: '300px', height: '46px' }}>
-              {searchByAddress ? SearchInput('address') : TitleWithSearch('Address')}
+              {searchByAddress ? SearchInput('address', inputRef) : TitleWithSearch('Address', handleAddressSearch)}
             </th>
             <th>City
             </th>
