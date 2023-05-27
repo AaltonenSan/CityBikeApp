@@ -1,5 +1,8 @@
 import express from 'express';
-import { getAllJourneys, uploadJourneys } from '../../controllers/journeyController';
+import {
+  getAllJourneys,
+  uploadJourneys,
+} from '../../controllers/journeyController';
 import { upload } from '../../middleware/csvParser';
 
 const journey = express.Router();

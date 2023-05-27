@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import pool from "../services/db";
+import { Request, Response } from 'express';
+import pool from '../services/db';
 import { parseCsv } from '../middleware/csvParser';
-import { Journey } from "../types";
+import { Journey } from '../types';
 import pgPromise from 'pg-promise';
 import { DateTime } from 'luxon';
 
@@ -11,11 +11,15 @@ const db = pgPromise();
 // GET all journeys
 export const getAllJourneys = async (req: Request, res: Response) => {
   try {
-    const result = await pool.query("SELECT * FROM journey");
+    const result = await pool.query('SELECT * FROM journey');
     if (result.rowCount > 0) {
-      result.rows.forEach(row => {
-        row.departure = DateTime.fromJSDate(row.departure).toFormat('yyyy-MM-dd HH:mm:ss');
-        row.return_time = DateTime.fromJSDate(row.return_time).toFormat('yyyy-MM-dd HH:mm:ss');
+      result.rows.forEach((row) => {
+        row.departure = DateTime.fromJSDate(row.departure).toFormat(
+          'yyyy-MM-dd HH:mm:ss'
+        );
+        row.return_time = DateTime.fromJSDate(row.return_time).toFormat(
+          'yyyy-MM-dd HH:mm:ss'
+        );
       });
       res.status(200).send({ data: result.rows });
     } else {
@@ -43,18 +47,21 @@ export const uploadJourneys = (req: Request, res: Response) => {
 export const insertJourneys = async (journeys: Journey[]) => {
   try {
     const client = await pool.connect();
-    const journeyColumnSet = new db.helpers.ColumnSet([
-      'departure',
-      'return_time',
-      'dep_station_id',
-      'dep_station_name',
-      'ret_station_id',
-      'ret_station_name',
-      'distance',
-      'duration'
-    ], { table: 'journey' });
+    const journeyColumnSet = new db.helpers.ColumnSet(
+      [
+        'departure',
+        'return_time',
+        'dep_station_id',
+        'dep_station_name',
+        'ret_station_id',
+        'ret_station_name',
+        'distance',
+        'duration',
+      ],
+      { table: 'journey' }
+    );
 
-    const values = journeys.map(journey => ({
+    const values = journeys.map((journey) => ({
       departure: journey.departure,
       return_time: journey.arrival,
       dep_station_id: journey.dep_station_id,
@@ -62,16 +69,17 @@ export const insertJourneys = async (journeys: Journey[]) => {
       ret_station_id: journey.ret_station_id,
       ret_station_name: journey.ret_station_name,
       distance: journey.distance,
-      duration: journey.duration
+      duration: journey.duration,
     }));
 
-    const query = db.helpers.insert(values, journeyColumnSet) + 'ON CONFLICT DO NOTHING';
+    const query =
+      db.helpers.insert(values, journeyColumnSet) + 'ON CONFLICT DO NOTHING';
 
     const result = await client.query(query);
     const rowCount = result.rowCount;
     client.release();
-    console.log(`Succesfully inserted ${rowCount} journeys`)
+    console.log(`Succesfully inserted ${rowCount} journeys`);
   } catch (error) {
     console.error(error);
   }
-}
+};

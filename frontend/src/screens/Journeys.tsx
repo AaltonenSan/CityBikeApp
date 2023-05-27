@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react"
-import { Container, Table } from "react-bootstrap"
-import PaginationControls from "../components/PaginationControls";
-import { getAllJourneys } from "../services/apiClient";
-import { Journey } from "../types";
-import durationMMss from "../util/timeConverter";
+import { useEffect, useState } from 'react';
+import { Container, Table } from 'react-bootstrap';
+import PaginationControls from '../components/PaginationControls';
+import { getAllJourneys } from '../services/apiClient';
+import { Journey } from '../types';
+import durationMMss from '../util/timeConverter';
 
 export default function Journeys() {
   const [journeys, setJourneys] = useState<Journey[]>([]);
-  const [page, setPage] = useState(1)
-  const lastPage = 10
+  const [page, setPage] = useState(1);
+  const lastPage = 10;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllJourneys()
-        setJourneys(response.data)
+        const response = await getAllJourneys();
+        setJourneys(response.data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, []);
 
   return (
     <Container className="mt-4">
-      <Table striped bordered responsive style={{ backgroundColor: 'rgba(255,255,255,0.95)', margin: 0 }}>
+      <Table
+        striped
+        bordered
+        responsive
+        style={{ backgroundColor: 'rgba(255,255,255,0.95)', margin: 0 }}
+      >
         <thead>
           <tr>
             <th>Departure</th>
@@ -36,7 +41,7 @@ export default function Journeys() {
           </tr>
         </thead>
         <tbody>
-          {journeys.map(journey => (
+          {journeys.map((journey) => (
             <tr key={journey.id}>
               <td>{journey.departure}</td>
               <td>{journey.return_time}</td>
@@ -48,9 +53,12 @@ export default function Journeys() {
           ))}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-center" style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}>
+      <div
+        className="d-flex justify-content-center"
+        style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}
+      >
         <PaginationControls page={page} setPage={setPage} lastPage={lastPage} />
       </div>
     </Container>
-  )
+  );
 }

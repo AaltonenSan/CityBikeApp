@@ -6,7 +6,7 @@ const api = supertest(app);
 
 describe('Station API', () => {
   beforeEach(async () => {
-    await pool.query('DELETE FROM station;')
+    await pool.query('DELETE FROM station;');
   });
 
   test('GET /api/station returns 404 if no stations found', async () => {
@@ -29,8 +29,8 @@ describe('Station API', () => {
       Operaattor: 'Testioperaattori',
       Kapasiteet: 1,
       x: 10.15,
-      y: 20.25
-    }
+      y: 20.25,
+    };
     const postResponse = await api.post('/api/station/new').send(newStation);
 
     expect(postResponse.body.id).toEqual(newStation.ID);
@@ -50,8 +50,8 @@ describe('Station API', () => {
       Operaattor: 'Testioperaattori',
       Kapasiteet: 1,
       x: 10.15,
-      y: 20.25
-    }
+      y: 20.25,
+    };
     await api.post('/api/station/new').send(newStation);
 
     const response = await api.get('/api/station');

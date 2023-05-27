@@ -42,30 +42,38 @@ export const getOneStation = async (req: Request, res: Response) => {
     WHERE
       s.id = $1
     GROUP BY
-      s.nimi, s.id;`
+      s.nimi, s.id;`;
 
-    const result = await pool.query(selectQuery, [id])
-    console.log(result)
+    const result = await pool.query(selectQuery, [id]);
+    console.log(result);
 
     if (result.rowCount > 0) {
       res.status(200).send({ data: result.rows });
     } else {
-      res.status(404).json({ error: `No station found with id ${id}` })
+      res.status(404).json({ error: `No station found with id ${id}` });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
   }
-}
+};
 
 // POST add new station to database
 export const addNewStation = async (req: Request, res: Response) => {
   try {
     const {
-      ID, Nimi, Namn,
-      Name, Osoite, Adress,
-      Kaupunki, Stad, Operaattor,
-      Kapasiteet, x, y
+      ID,
+      Nimi,
+      Namn,
+      Name,
+      Osoite,
+      Adress,
+      Kaupunki,
+      Stad,
+      Operaattor,
+      Kapasiteet,
+      x,
+      y,
     } = req.body;
 
     const insertQuery = `
@@ -74,14 +82,25 @@ export const addNewStation = async (req: Request, res: Response) => {
       RETURNING *`;
 
     const insertResult = await pool.query(insertQuery, [
-      ID, Nimi, Namn, Name, Osoite, Adress, Kaupunki, Stad, Operaattor, Kapasiteet, x, y
-    ])
+      ID,
+      Nimi,
+      Namn,
+      Name,
+      Osoite,
+      Adress,
+      Kaupunki,
+      Stad,
+      Operaattor,
+      Kapasiteet,
+      x,
+      y,
+    ]);
     res.json(insertResult.rows[0]);
   } catch (error: any) {
     console.log(error.message);
     res.status(500).json({ error: 'Error inserting data' });
   }
-}
+};
 
 // POST csv file to server
 export const uploadStations = async (req: Request, res: Response) => {
@@ -98,28 +117,31 @@ export const uploadStations = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Error uploading file' });
     }
   }
-}
+};
 
 // Insert stations from csv file to database after parsing
 export const insertStations = async (stations: Station[]) => {
   try {
     const client = await pool.connect();
-    const stationColumnSet = new db.helpers.ColumnSet([
-      'id',
-      'nimi',
-      'namn',
-      'name',
-      'osoite',
-      'adress',
-      'kaupunki',
-      'stad',
-      'operaattor',
-      'kapasiteet',
-      'x',
-      'y'
-    ], { table: 'station' });
+    const stationColumnSet = new db.helpers.ColumnSet(
+      [
+        'id',
+        'nimi',
+        'namn',
+        'name',
+        'osoite',
+        'adress',
+        'kaupunki',
+        'stad',
+        'operaattor',
+        'kapasiteet',
+        'x',
+        'y',
+      ],
+      { table: 'station' }
+    );
 
-    const values = stations.map(station => ({
+    const values = stations.map((station) => ({
       id: station.ID,
       nimi: station.Nimi,
       namn: station.Namn,
@@ -131,16 +153,17 @@ export const insertStations = async (stations: Station[]) => {
       operaattor: station.Operaattor,
       kapasiteet: station.Kapasiteet,
       x: station.x,
-      y: station.y
+      y: station.y,
     }));
 
-    const query = db.helpers.insert(values, stationColumnSet) + 'ON CONFLICT DO NOTHING';
+    const query =
+      db.helpers.insert(values, stationColumnSet) + 'ON CONFLICT DO NOTHING';
     const result = await client.query(query);
     const rowCount = result.rowCount;
 
     client.release();
-    console.log(`Successfully inserted ${rowCount} stations`)
+    console.log(`Successfully inserted ${rowCount} stations`);
   } catch (error) {
     console.error(error);
   }
-}
+};

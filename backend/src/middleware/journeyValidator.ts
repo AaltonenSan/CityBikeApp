@@ -1,16 +1,14 @@
-import { DateTime } from "luxon";
-import { JourneyCsv } from "../types";
+import { DateTime } from 'luxon';
+import { JourneyCsv } from '../types';
 
 const validateJourneyTimes = (departure: string, arrival: string): boolean => {
   const formatString = "yyyy-MM-dd'T'HH:mm:ss";
   const departureTime = DateTime.fromFormat(departure, formatString);
   const arrivalTime = DateTime.fromFormat(arrival, formatString);
   return (
-    departureTime.isValid &&
-    arrivalTime.isValid &&
-    departureTime < arrivalTime
+    departureTime.isValid && arrivalTime.isValid && departureTime < arrivalTime
   );
-}
+};
 
 const isValidInteger = (value: string, limit: number): boolean => {
   if (!Number.isInteger(+value)) {
@@ -20,9 +18,9 @@ const isValidInteger = (value: string, limit: number): boolean => {
     return false;
   }
   return true;
-}
+};
 
-/** 
+/**
  * Validate CSV row to be a valid City Bike journey, returns true or false
  */
 const validateJourney = (row: JourneyCsv): boolean => {
@@ -40,6 +38,6 @@ const validateJourney = (row: JourneyCsv): boolean => {
   }
 
   return false;
-}
+};
 
 export default validateJourney;

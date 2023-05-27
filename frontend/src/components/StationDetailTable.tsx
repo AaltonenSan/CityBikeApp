@@ -1,13 +1,18 @@
-import { Table } from "react-bootstrap";
-import { Station } from "../types";
+import { Table } from 'react-bootstrap';
+import { Station } from '../types';
 
-type StationDetailTableProps = {
-  station: Station;
-}
+type StationDetailTableProps = { station: Station };
 
-export default function StationDetailTable({ station }: StationDetailTableProps) {
+export default function StationDetailTable({
+  station,
+}: StationDetailTableProps) {
   return (
-    <Table striped bordered responsive style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}>
+    <Table
+      striped
+      bordered
+      responsive
+      style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}
+    >
       <tbody>
         <tr>
           <th>Name</th>
@@ -47,5 +52,5 @@ export default function StationDetailTable({ station }: StationDetailTableProps)
         </tr>
       </tbody>
     </Table>
-  )
+  );
 }
