@@ -25,17 +25,30 @@ export const parseCsv = (csvUrl: string, filetype: string) => {
 
   let collectionCsv: Journey[] | Station[] = [];
   let invalidRows: number = 0;
+  let validRows: number = 0;
+
+  console.log(
+    filetype === 'journey'
+      ? 'Parsing and validating journey csv...'
+      : 'Parsing station csv...'
+  );
 
   fs.createReadStream(csvUrl)
     .pipe(
       fastCsv.parse({ headers: filetype === 'journey' ? journeyHeaders : true })
     )
-    .on('data', (data: any) => {
+    .on('data', async (data: any) => {
       if (filetype === 'journey') {
         if (validateJourney(data)) {
           collectionCsv.push(data);
+          validRows++;
+          if (validRows === 100_000) {
+            await insertJourneys(collectionCsv as Journey[]);
+            collectionCsv = [];
+            validRows = 0;
+            console.log('Parsing adn validating journey csv...');
+          }
         } else {
-          console.log(data);
           invalidRows++;
         }
       } else {
@@ -45,8 +58,9 @@ export const parseCsv = (csvUrl: string, filetype: string) => {
     .on('end', async () => {
       try {
         if (filetype === 'journey') {
-          console.log(`${invalidRows} invalid rows found in csv file.`);
           await insertJourneys(collectionCsv as Journey[]);
+          console.log('Journeys inserted to database.');
+          console.log(`${invalidRows} invalid rows found in csv file.`);
         } else {
           await insertStations(collectionCsv as Station[]);
         }

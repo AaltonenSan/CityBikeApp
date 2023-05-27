@@ -1,11 +1,31 @@
-import { Table } from 'react-bootstrap';
-import { Station } from '../types';
+import { useEffect, useState } from 'react';
+import { Spinner, Table } from 'react-bootstrap';
+import { distanceInKm } from '../util/journeyValueConverter';
+import { StationDetailsInterface, StationDetailsResponse } from '../types';
+import { getOneStation } from '../services/apiClient';
 
-type StationDetailTableProps = { station: Station };
+type StationDetailTableProps = { station: StationDetailsInterface };
 
 export default function StationDetailTable({
   station,
 }: StationDetailTableProps) {
+  const [stationDetails, setStationDetails] =
+    useState<StationDetailsInterface>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response: StationDetailsResponse = await getOneStation(
+          station.id
+        );
+        setStationDetails(response.data[0]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [station]);
+
   return (
     <Table
       striped
@@ -36,19 +56,51 @@ export default function StationDetailTable({
         </tr>
         <tr>
           <th>Journeys started</th>
-          <td>TODO!</td>
+          <td>
+            {stationDetails ? (
+              stationDetails?.journeys_started
+            ) : (
+              <Spinner variant="warning" animation="border" size="sm" />
+            )}
+          </td>
         </tr>
         <tr>
           <th>Journeys ended</th>
-          <td>TODO!</td>
+          <td>
+            {stationDetails ? (
+              stationDetails?.journeys_ended
+            ) : (
+              <Spinner variant="warning" animation="border" size="sm" />
+            )}
+          </td>
         </tr>
         <tr>
-          <th>Average started journey distance</th>
-          <td>TODO</td>
+          <th>Average started journey distance (km)</th>
+          <td>
+            {stationDetails ? (
+              stationDetails?.avg_distance_started ? (
+                distanceInKm(stationDetails.avg_distance_started)
+              ) : (
+                '-'
+              )
+            ) : (
+              <Spinner variant="warning" animation="border" size="sm" />
+            )}
+          </td>
         </tr>
         <tr>
-          <th>Average ended journey distance</th>
-          <td>TODO</td>
+          <th>Average ended journey distance (km)</th>
+          <td>
+            {stationDetails ? (
+              stationDetails?.avg_distance_ended ? (
+                distanceInKm(stationDetails.avg_distance_ended)
+              ) : (
+                '-'
+              )
+            ) : (
+              <Spinner variant="warning" animation="border" size="sm" />
+            )}
+          </td>
         </tr>
       </tbody>
     </Table>

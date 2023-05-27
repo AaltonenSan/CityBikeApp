@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { StationResponseData, JourneyResponseData } from '../types';
+import {
+  StationResponseData,
+  JourneyResponseData,
+  StationDetailsResponse,
+} from '../types';
 
 // GET list of all stations
 export const getAllStations = async () => {
@@ -21,6 +25,6 @@ export const getAllJourneys = async () => {
  */
 export const getOneStation = async (id: number) => {
   const response = await axios.get(`http://localhost:3001/api/station/${id}`);
-  const data: StationResponseData = await response.data;
+  const data: StationDetailsResponse = await response.data;
   return data;
 };

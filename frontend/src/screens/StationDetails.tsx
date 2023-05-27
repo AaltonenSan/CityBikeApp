@@ -1,26 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import StationDetailTable from '../components/StationDetailTable';
 import StationMap from '../components/StationMap';
-import { getOneStation } from '../services/apiClient';
-import { Station } from '../types';
 
 export default function StationDetails() {
-  const [station, setStation] = useState<Station>();
   const location = useLocation();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getOneStation(location.state.id);
-        setStation(response.data[0]);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, [location]);
+  const { station } = location.state;
 
   return (
     <Container
@@ -30,7 +15,12 @@ export default function StationDetails() {
       {station ? (
         <Row className="w-100">
           <Col xs={12} md={6} className="p-0" style={{ minHeight: '300px' }}>
-            <StationMap station={station} />
+            <StationMap
+              x={station.x}
+              y={station.y}
+              name={station.nimi}
+              osoite={station.osoite}
+            />
           </Col>
           <Col xs={12} md={6} className="p-0">
             <div style={{ backgroundColor: 'rgba(255,255,255,0.95)' }}>

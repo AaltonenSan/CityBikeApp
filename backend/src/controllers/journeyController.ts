@@ -45,6 +45,7 @@ export const uploadJourneys = (req: Request, res: Response) => {
 
 // Insert journeys from csv file to database after parsing and validating
 export const insertJourneys = async (journeys: Journey[]) => {
+  console.log('Inserting journeys to database...');
   try {
     const client = await pool.connect();
     const journeyColumnSet = new db.helpers.ColumnSet(

@@ -3,7 +3,7 @@ import { Container, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PaginationControls from '../components/PaginationControls';
 import { getAllStations } from '../services/apiClient';
-import { Station } from '../types';
+import { Station, StationResponseData } from '../types';
 import { FaSearch } from 'react-icons/fa';
 import { AiOutlineClose } from 'react-icons/ai';
 
@@ -20,7 +20,7 @@ export default function Stations() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllStations();
+        const response: StationResponseData = await getAllStations();
         setStations(response.data);
       } catch (error) {
         console.error(error);
@@ -39,8 +39,8 @@ export default function Stations() {
   }, [searchByName, searchByAddress]);
 
   // Navigate to station details page
-  const handleClick = (id: number) =>
-    navigate('/station', { state: { id: id } });
+  const handleClick = (station: Station) =>
+    navigate('/station', { state: { station } });
 
   const handleNameSearch = () => {
     setSearchByName(true);
@@ -124,13 +124,16 @@ export default function Stations() {
   const paginatedStations = search(stations).slice(firstIndex, lastIndex);
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4" style={{ maxWidth: '800px' }}>
       <Table
         striped
         bordered
         hover
         responsive
-        style={{ backgroundColor: 'rgba(255,255,255,0.95)', margin: 0 }}
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.95)',
+          margin: 0,
+        }}
       >
         <thead>
           <tr>
@@ -145,17 +148,15 @@ export default function Stations() {
                 : TitleWithSearch('Address', handleAddressSearch)}
             </th>
             <th>City</th>
-            <th>Operator</th>
             <th>Capasity</th>
           </tr>
         </thead>
         <tbody style={{ cursor: 'pointer' }}>
           {paginatedStations.map((station) => (
-            <tr key={station.id} onClick={() => handleClick(station.id)}>
+            <tr key={station.id} onClick={() => handleClick(station)}>
               <td>{station.nimi}</td>
               <td>{station.osoite}</td>
               <td>{station.kaupunki}</td>
-              <td>{station.operaattor}</td>
               <td>{station.kapasiteet}</td>
             </tr>
           ))}

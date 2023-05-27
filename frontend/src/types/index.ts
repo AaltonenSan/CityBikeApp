@@ -18,6 +18,17 @@ export interface StationResponseData {
   data: Station[];
 }
 
+export interface StationDetailsInterface extends Station {
+  journeys_ended: number;
+  journeys_started: number;
+  avg_distance_ended: number;
+  avg_distance_started: number;
+}
+
+export interface StationDetailsResponse {
+  data: StationDetailsInterface[];
+}
+
 export interface Journey {
   id?: number;
   departure: string;

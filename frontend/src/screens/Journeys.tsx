@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Container, Table } from 'react-bootstrap';
 import PaginationControls from '../components/PaginationControls';
 import { getAllJourneys } from '../services/apiClient';
-import { Journey } from '../types';
-import durationMMss from '../util/timeConverter';
+import { Journey, JourneyResponseData } from '../types';
+import { durationInMinutes, distanceInKm } from '../util/journeyValueConverter';
 
 export default function Journeys() {
   const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -13,7 +13,7 @@ export default function Journeys() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllJourneys();
+        const response: JourneyResponseData = await getAllJourneys();
         setJourneys(response.data);
       } catch (error) {
         console.error(error);
@@ -36,8 +36,8 @@ export default function Journeys() {
             <th>Return</th>
             <th>Departure station</th>
             <th>Return station</th>
-            <th>Distance (m)</th>
-            <th>Duration</th>
+            <th>Distance (km)</th>
+            <th>Duration (min)</th>
           </tr>
         </thead>
         <tbody>
@@ -47,8 +47,8 @@ export default function Journeys() {
               <td>{journey.return_time}</td>
               <td>{journey.dep_station_name}</td>
               <td>{journey.ret_station_name}</td>
-              <td>{journey.distance}</td>
-              <td>{durationMMss(journey.duration)}</td>
+              <td>{distanceInKm(journey.distance)}</td>
+              <td>{durationInMinutes(journey.duration)}</td>
             </tr>
           ))}
         </tbody>

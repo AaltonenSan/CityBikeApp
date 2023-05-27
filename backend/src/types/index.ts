@@ -35,10 +35,3 @@ export interface Station {
   x: number;
   y: number;
 }
-
-export interface StationJourneys {
-  journeys_started: number;
-  journeys_ended: number;
-  avg_distance_started?: number;
-  avg_distance_ended?: number;
-}

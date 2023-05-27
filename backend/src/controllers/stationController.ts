@@ -28,11 +28,10 @@ export const getOneStation = async (req: Request, res: Response) => {
   try {
     const selectQuery = `
     SELECT
-      s.nimi AS station_name,
       COUNT(DISTINCT j.id) AS journeys_started,
       COUNT(DISTINCT j2.id) AS journeys_ended,
       AVG(CASE WHEN j.dep_station_id = s.id THEN j.distance END) AS avg_distance_started,
-      AVG(CASE WHEN j.ret_station_id = s.id THEN j.distance END) AS avg_distance_ended
+      AVG(CASE WHEN j2.ret_station_id = s.id THEN j2.distance END) AS avg_distance_ended
     FROM
       station s
     LEFT JOIN
@@ -40,12 +39,9 @@ export const getOneStation = async (req: Request, res: Response) => {
     LEFT JOIN
       journey j2 ON j2.ret_station_id = s.id
     WHERE
-      s.id = $1
-    GROUP BY
-      s.nimi, s.id;`;
+      s.id = $1;`;
 
     const result = await pool.query(selectQuery, [id]);
-    console.log(result);
 
     if (result.rowCount > 0) {
       res.status(200).send({ data: result.rows });
