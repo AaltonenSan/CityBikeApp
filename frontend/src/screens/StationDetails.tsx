@@ -9,7 +9,7 @@ export default function StationDetails() {
 
   return (
     <Container
-      className="d-flex align-items-center justify-content-center mt-2"
+      className="d-flex align-items-center justify-content-center mt-2 mb-2"
       style={{ minHeight: '70vh' }}
     >
       {station ? (

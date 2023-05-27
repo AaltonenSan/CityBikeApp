@@ -1,33 +1,61 @@
 import { useEffect, useState } from 'react';
-import { Container, Table } from 'react-bootstrap';
+import { Container, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
 import PaginationControls from '../components/PaginationControls';
-import { getAllJourneys } from '../services/apiClient';
-import { Journey, JourneyResponseData } from '../types';
+import { getAllJourneys, getJourneyCount } from '../services/apiClient';
+import { Journey, JourneyCountResponse, JourneyResponseData } from '../types';
 import { durationInMinutes, distanceInKm } from '../util/journeyValueConverter';
 
 export default function Journeys() {
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [page, setPage] = useState(1);
-  const lastPage = 10;
+  const [lastPage, setLastPage] = useState(1);
 
+  // Get journeys for current page
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response: JourneyResponseData = await getAllJourneys();
+        const response: JourneyResponseData = await getAllJourneys(page);
         setJourneys(response.data);
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
+  }, [page]);
+
+  // Get total amount of pages for pagination on first render
+  useEffect(() => {
+    const fetchPageCount = async () => {
+      try {
+        const response: JourneyCountResponse = await getJourneyCount();
+        setLastPage(response.count / 15);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPageCount();
   }, []);
 
+  type ClickableColumnType = {
+    title: string;
+    id: number;
+  };
+
+  const ClickableColumn = ({ title, id }: ClickableColumnType) => {
+    return (
+      <OverlayTrigger overlay={<Tooltip>Station details</Tooltip>}>
+        <span>{title}</span>
+      </OverlayTrigger>
+    );
+  };
+
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 mb-4">
       <Table
         striped
         bordered
         responsive
+        hover
         style={{ backgroundColor: 'rgba(255,255,255,0.95)', margin: 0 }}
       >
         <thead>
@@ -45,7 +73,12 @@ export default function Journeys() {
             <tr key={journey.id}>
               <td>{journey.departure}</td>
               <td>{journey.return_time}</td>
-              <td>{journey.dep_station_name}</td>
+              <td>
+                <ClickableColumn
+                  title={journey.dep_station_name}
+                  id={journey.dep_station_id}
+                />
+              </td>
               <td>{journey.ret_station_name}</td>
               <td>{distanceInKm(journey.distance)}</td>
               <td>{durationInMinutes(journey.duration)}</td>

@@ -4,6 +4,7 @@
   background-size: cover;
   background-position: center;
   height: 100vh;
+  overflow: auto;
 }
 
 .navbar-collapse {
@@ -34,4 +35,8 @@
 
 .pagination > li > a:focus {
   background-color: transparent;
+}
+
+.tooltip {
+  position: fixed !important;
 }

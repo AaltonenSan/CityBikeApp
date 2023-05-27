@@ -44,3 +44,7 @@ export interface Journey {
 export interface JourneyResponseData {
   data: Journey[];
 }
+
+export interface JourneyCountResponse {
+  count: number;
+}

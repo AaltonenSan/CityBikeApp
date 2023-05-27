@@ -117,14 +117,14 @@ export default function Stations() {
   };
 
   // Pagination settings
-  const limit = 10; // stations shown per page
+  const limit = 15; // stations shown per page
   const lastPage = Math.ceil(search(stations).length / limit); // set the last page according to search results
   const lastIndex = page * limit;
   const firstIndex = lastIndex - limit;
   const paginatedStations = search(stations).slice(firstIndex, lastIndex);
 
   return (
-    <Container className="mt-4" style={{ maxWidth: '800px' }}>
+    <Container className="mt-4 mb-4" style={{ maxWidth: '800px' }}>
       <Table
         striped
         bordered

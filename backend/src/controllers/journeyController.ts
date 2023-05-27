@@ -10,8 +10,20 @@ const db = pgPromise();
 
 // GET all journeys
 export const getAllJourneys = async (req: Request, res: Response) => {
+  const rowsPerPage = 15;
+  const page = req.query.page ? parseInt(req.query.page as string) : 1;
+  const offset = (page - 1) * rowsPerPage;
+
   try {
-    const result = await pool.query('SELECT * FROM journey');
+    const query = `
+    SELECT * FROM journey
+    ORDER BY id
+    LIMIT $1
+    OFFSET $2
+    `;
+    const values = [rowsPerPage, offset];
+    const result = await pool.query(query, values);
+
     if (result.rowCount > 0) {
       result.rows.forEach((row) => {
         row.departure = DateTime.fromJSDate(row.departure).toFormat(
@@ -25,6 +37,19 @@ export const getAllJourneys = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ error: 'No journeys found' });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
+export const getJourneyCount = async (req: Request, res: Response) => {
+  try {
+    const query = `
+    SELECT COUNT(*) FROM journey
+    `;
+    const result = await pool.query(query);
+    res.status(200).send({ count: result.rows[0].count });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
