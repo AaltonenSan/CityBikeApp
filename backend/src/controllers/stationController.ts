@@ -25,6 +25,8 @@ export const getAllStations = async (req: Request, res: Response) => {
 // GET single station details by id
 export const getOneStation = async (req: Request, res: Response) => {
   const id = req.params.id;
+  const selectedMonth = (req.query.month as string) || '';
+
   try {
     const selectQuery = `
     SELECT
@@ -39,13 +41,16 @@ export const getOneStation = async (req: Request, res: Response) => {
     LEFT JOIN
       journey j2 ON j2.ret_station_id = s.id
     WHERE
-      s.id = $1;`;
+      s.id = $1
+      ${selectedMonth ? 'AND EXTRACT(MONTH FROM j.departure) = $2' : ''}
+      `;
 
     const topRetStationsQuery = `
     WITH return_station_counts AS (
       SELECT ret_station_id, COUNT(*) AS journey_count
       FROM journey
       WHERE dep_station_id = $1
+      ${selectedMonth ? 'AND EXTRACT(MONTH FROM journey.departure) = $2' : ''}
       GROUP BY ret_station_id
     )
     SELECT s.nimi AS name, r.journey_count
@@ -60,6 +65,7 @@ export const getOneStation = async (req: Request, res: Response) => {
       SELECT dep_station_id, COUNT(*) AS journey_count
       FROM journey
       WHERE ret_station_id = $1
+      ${selectedMonth ? 'AND EXTRACT(MONTH FROM journey.departure) = $2' : ''}
       GROUP BY dep_station_id
     )
     SELECT s.nimi AS name, s.id
@@ -69,9 +75,14 @@ export const getOneStation = async (req: Request, res: Response) => {
     LIMIT 5;
     `;
 
-    const result = await pool.query(selectQuery, [id]);
-    const topRetStationsResult = await pool.query(topRetStationsQuery, [id]);
-    const topDepStationResult = await pool.query(topDepStationQuery, [id]);
+    const params = [id];
+    if (selectedMonth) {
+      params.push(selectedMonth);
+    }
+
+    const result = await pool.query(selectQuery, params);
+    const topRetStationsResult = await pool.query(topRetStationsQuery, params);
+    const topDepStationResult = await pool.query(topDepStationQuery, params);
 
     if (result.rowCount > 0) {
       res.status(200).send({

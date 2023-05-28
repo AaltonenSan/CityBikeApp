@@ -7,26 +7,28 @@ import {
   TopStations,
 } from '../types';
 import { getOneStation } from '../services/apiClient';
+import getMonthName from '../util/getMonthName';
 
 type StationDetailTableProps = { station: StationDetailsInterface };
 
 export default function StationDetailTable({
   station,
 }: StationDetailTableProps) {
-  const [stationDetails, setStationDetails] =
-    useState<StationDetailsInterface>();
+  const [calculations, setCalculations] = useState<StationDetailsInterface>();
   const [topRetStations, setTopRetStations] = useState<TopStations[]>([]);
   const [topDepStations, setTopDepStations] = useState<TopStations[]>([]);
   const [loading, setLoading] = useState(true);
+  const [month, setMonth] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response: StationDetailsResponse = await getOneStation(
-          station.id
+          station.id,
+          month
         );
         const { data, top_ret_stations, top_dep_stations } = response;
-        setStationDetails(data[0]);
+        setCalculations(data[0]);
         setTopRetStations(top_ret_stations);
         setTopDepStations(top_dep_stations);
         setLoading(false);
@@ -36,7 +38,7 @@ export default function StationDetailTable({
       }
     };
     fetchData();
-  }, [station]);
+  }, [station, month]);
 
   // Force map reload after the table size changes to avoid gray tiles
   useEffect(() => {
@@ -53,6 +55,11 @@ export default function StationDetailTable({
         ))}
       </ul>
     );
+  };
+
+  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setMonth(event.target.value);
+    setLoading(true);
   };
 
   return (
@@ -84,12 +91,25 @@ export default function StationDetailTable({
           <td>{station.kapasiteet}</td>
         </tr>
         <tr>
+          <th>Filter calculations by month:</th>
+          <td>
+            <select id="month" onChange={handleMonthChange}>
+              <option value="">All Months</option>
+              {Array.from({ length: 12 }, (_, index) => (
+                <option key={index + 1} value={index + 1}>
+                  {getMonthName(index + 1)}
+                </option>
+              ))}
+            </select>
+          </td>
+        </tr>
+        <tr>
           <th>Journeys started</th>
           <td>
             {loading ? (
               <Spinner variant="warning" animation="border" size="sm" />
             ) : (
-              stationDetails?.journeys_started
+              calculations?.journeys_started
             )}
           </td>
         </tr>
@@ -99,7 +119,7 @@ export default function StationDetailTable({
             {loading ? (
               <Spinner variant="warning" animation="border" size="sm" />
             ) : (
-              stationDetails?.journeys_ended
+              calculations?.journeys_ended
             )}
           </td>
         </tr>
@@ -108,8 +128,8 @@ export default function StationDetailTable({
           <td>
             {loading ? (
               <Spinner variant="warning" animation="border" size="sm" />
-            ) : stationDetails?.avg_distance_started ? (
-              distanceInKm(stationDetails.avg_distance_started)
+            ) : calculations?.avg_distance_started ? (
+              distanceInKm(calculations.avg_distance_started)
             ) : (
               '-'
             )}
@@ -120,8 +140,8 @@ export default function StationDetailTable({
           <td>
             {loading ? (
               <Spinner variant="warning" animation="border" size="sm" />
-            ) : stationDetails?.avg_distance_ended ? (
-              distanceInKm(stationDetails.avg_distance_ended)
+            ) : calculations?.avg_distance_ended ? (
+              distanceInKm(calculations.avg_distance_ended)
             ) : (
               '-'
             )}
@@ -132,8 +152,10 @@ export default function StationDetailTable({
           <td>
             {loading ? (
               <Spinner variant="warning" animation="border" />
-            ) : (
+            ) : topRetStations.length > 0 ? (
               <TopStationsTable stations={topRetStations} />
+            ) : (
+              '-'
             )}
           </td>
         </tr>
@@ -142,8 +164,10 @@ export default function StationDetailTable({
           <td>
             {loading ? (
               <Spinner variant="warning" animation="border" />
-            ) : (
+            ) : topDepStations.length > 0 ? (
               <TopStationsTable stations={topDepStations} />
+            ) : (
+              '-'
             )}{' '}
           </td>
         </tr>

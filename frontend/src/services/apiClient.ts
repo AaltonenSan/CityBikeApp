@@ -25,9 +25,10 @@ export const getAllJourneys = async (page?: number) => {
  * GET info for one station
  * @param id station.id
  */
-export const getOneStation = async (id: number) => {
-  const { data } = await axios.get<StationDetailsResponse>(
-    `http://localhost:3001/api/station/${id}`
-  );
+export const getOneStation = async (id: number, month: string) => {
+  const url = `http://localhost:3001/api/station/${id}`;
+  const params = month ? { month } : {};
+
+  const { data } = await axios.get<StationDetailsResponse>(url, { params });
   return data;
 };
