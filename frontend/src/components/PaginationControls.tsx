@@ -84,11 +84,11 @@ export default function PaginationControls({
 
       <Pagination.Next
         onClick={() => handleNext()}
-        disabled={page === lastPage}
+        disabled={page === lastPage || lastPage === 0}
       />
       <Pagination.Last
         onClick={() => setPage(lastPage)}
-        disabled={page === lastPage}
+        disabled={page === lastPage || lastPage === 0}
       />
     </Pagination>
   );

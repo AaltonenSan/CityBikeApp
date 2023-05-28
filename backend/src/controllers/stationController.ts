@@ -41,10 +41,44 @@ export const getOneStation = async (req: Request, res: Response) => {
     WHERE
       s.id = $1;`;
 
+    const topRetStationsQuery = `
+    WITH return_station_counts AS (
+      SELECT ret_station_id, COUNT(*) AS journey_count
+      FROM journey
+      WHERE dep_station_id = $1
+      GROUP BY ret_station_id
+    )
+    SELECT s.nimi AS name, r.journey_count
+    FROM return_station_counts r
+    JOIN station s ON s.id = r.ret_station_id
+    ORDER BY r.journey_count DESC
+    LIMIT 5;
+    `;
+
+    const topDepStationQuery = `
+    WITH departure_station_counts AS (
+      SELECT dep_station_id, COUNT(*) AS journey_count
+      FROM journey
+      WHERE ret_station_id = $1
+      GROUP BY dep_station_id
+    )
+    SELECT s.nimi AS name, s.id
+    FROM departure_station_counts d
+    JOIN station s ON s.id = d.dep_station_id
+    ORDER BY d.journey_count DESC
+    LIMIT 5;
+    `;
+
     const result = await pool.query(selectQuery, [id]);
+    const topRetStationsResult = await pool.query(topRetStationsQuery, [id]);
+    const topDepStationResult = await pool.query(topDepStationQuery, [id]);
 
     if (result.rowCount > 0) {
-      res.status(200).send({ data: result.rows });
+      res.status(200).send({
+        data: result.rows,
+        top_ret_stations: topRetStationsResult.rows,
+        top_dep_stations: topDepStationResult.rows,
+      });
     } else {
       res.status(404).json({ error: `No station found with id ${id}` });
     }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Container, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
 import PaginationControls from '../components/PaginationControls';
-import { getAllJourneys, getJourneyCount } from '../services/apiClient';
-import { Journey, JourneyCountResponse, JourneyResponseData } from '../types';
+import { getAllJourneys } from '../services/apiClient';
+import { Journey, JourneyResponseData } from '../types';
 import { durationInMinutes, distanceInKm } from '../util/journeyValueConverter';
 
 export default function Journeys() {
@@ -16,25 +16,13 @@ export default function Journeys() {
       try {
         const response: JourneyResponseData = await getAllJourneys(page);
         setJourneys(response.data);
+        if (lastPage === 1) setLastPage(response.last_page!);
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
-  }, [page]);
-
-  // Get total amount of pages for pagination on first render
-  useEffect(() => {
-    const fetchPageCount = async () => {
-      try {
-        const response: JourneyCountResponse = await getJourneyCount();
-        setLastPage(response.count / 15);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchPageCount();
-  }, []);
+  }, [page, lastPage]);
 
   type ClickableColumnType = {
     title: string;

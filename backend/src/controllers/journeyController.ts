@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 // initialize pg-promise
 const db = pgPromise();
 
-// GET all journeys
+// GET all journeys and count for pagination
 export const getAllJourneys = async (req: Request, res: Response) => {
   const rowsPerPage = 15;
   const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -33,23 +33,27 @@ export const getAllJourneys = async (req: Request, res: Response) => {
           'yyyy-MM-dd HH:mm:ss'
         );
       });
-      res.status(200).send({ data: result.rows });
+      // if page is 1, also get total count of journeys
+      if (page === 1) {
+        const countQuery = `
+        SELECT COUNT(*) AS total_count 
+        FROM journey
+        `;
+        const countResult = await pool.query(countQuery);
+        const lastPage = Math.ceil(
+          countResult.rows[0].total_count / rowsPerPage
+        );
+
+        res.status(200).send({
+          data: result.rows,
+          last_page: lastPage,
+        });
+      } else {
+        res.status(200).send({ data: result.rows });
+      }
     } else {
       res.status(404).json({ error: 'No journeys found' });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
-  }
-};
-
-export const getJourneyCount = async (req: Request, res: Response) => {
-  try {
-    const query = `
-    SELECT COUNT(*) FROM journey
-    `;
-    const result = await pool.query(query);
-    res.status(200).send({ count: result.rows[0].count });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });

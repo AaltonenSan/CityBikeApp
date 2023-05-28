@@ -18,15 +18,24 @@ export interface StationResponseData {
   data: Station[];
 }
 
+export interface TopStations {
+  id: number;
+  name: string;
+}
+
 export interface StationDetailsInterface extends Station {
   journeys_ended: number;
   journeys_started: number;
   avg_distance_ended: number;
   avg_distance_started: number;
+  top_ret_stations: TopStations[];
+  top_dep_stations: TopStations[];
 }
 
 export interface StationDetailsResponse {
   data: StationDetailsInterface[];
+  top_ret_stations: TopStations[];
+  top_dep_stations: TopStations[];
 }
 
 export interface Journey {
@@ -43,8 +52,5 @@ export interface Journey {
 
 export interface JourneyResponseData {
   data: Journey[];
-}
-
-export interface JourneyCountResponse {
-  count: number;
+  last_page?: number;
 }

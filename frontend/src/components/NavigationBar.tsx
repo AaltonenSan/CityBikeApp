@@ -29,7 +29,7 @@ export default function NavigationBar() {
     <Navbar bg="light" expand="sm" expanded={expanded} ref={navbarRef}>
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Helsinki City Bikes
+          <strong>Helsinki City Bikes</strong>
         </Navbar.Brand>
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"

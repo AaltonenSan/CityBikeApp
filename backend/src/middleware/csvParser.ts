@@ -46,7 +46,7 @@ export const parseCsv = (csvUrl: string, filetype: string) => {
             await insertJourneys(collectionCsv as Journey[]);
             collectionCsv = [];
             validRows = 0;
-            console.log('Parsing adn validating journey csv...');
+            console.log('Parsing and validating journey csv...');
           }
         } else {
           invalidRows++;

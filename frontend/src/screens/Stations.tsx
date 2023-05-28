@@ -127,9 +127,9 @@ export default function Stations() {
     <Container className="mt-4 mb-4" style={{ maxWidth: '800px' }}>
       <Table
         striped
-        bordered
         hover
         responsive
+        bordered
         style={{
           backgroundColor: 'rgba(255,255,255,0.95)',
           margin: 0,
