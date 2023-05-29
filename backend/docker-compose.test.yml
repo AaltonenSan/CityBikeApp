@@ -11,8 +11,9 @@ services:
     ports:
       - 7654:5432
     volumes:
-      - dbdata:/var/lib/postgresql/data/
-      - ./src/db/testdbinit.sql:/docker-entrypoint-initdb.d/testdbinit.sql
+      - ./src/db/testdbinit.sql:/docker-entrypoint-initdb.d/01_testdbinit.sql
+      - ./src/tests/data/import_data.sql:/docker-entrypoint-initdb.d/02_import_data.sql
+      - ./src/tests/data:/data
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -26,6 +27,6 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=password
 
 volumes:
-  dbdata:
+  testdata:
     driver: local
   pgadmin_data:

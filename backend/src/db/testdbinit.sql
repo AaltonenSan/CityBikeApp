@@ -36,4 +36,3 @@ CREATE TABLE IF NOT EXISTS journey (
 CREATE INDEX IF NOT EXISTS station_id_idx ON station (id);
 CREATE INDEX IF NOT EXISTS journey_dep_station_id_idx ON journey (dep_station_id);
 CREATE INDEX IF NOT EXISTS journey_ret_station_id_idx ON journey (ret_station_id);
-

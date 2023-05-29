@@ -1,0 +1,6 @@
+FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+11,519,Tapionaukio,Tapioplatsen,Tapionaukio,Tapionaukio 9,Tapioplatsen 9,Espoo,Esbo,CityBike Finland,26,24.805825,60.176168
+12,521,Kulttuuriaukio,Kulturplatsen,Kulttuuriaukio,Kulttuuriaukio 2,Kulturplatsen 2,Espoo,Esbo,CityBike Finland,30,24.803942,60.177588
+13,523,Ahertajantie,Flitarvägen,Ahertajantie,Ahertajantie 1,Flitargränden 1,Espoo,Esbo,CityBike Finland,20,24.797984,60.17875
+14,525,Mäntyviita,Tallbysket,Mäntyviita,Mäntyviita 2,Tallbysket 2,Espoo,Esbo,CityBike Finland,10,24.810974,60.178702
+15,527,Otsolahti,Björnviken,Otsolahti,Otsolahdentie 18,Björnviksvägen 18,Espoo,Esbo,CityBike Finland,18,24.817423,60.178655

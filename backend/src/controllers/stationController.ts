@@ -30,6 +30,7 @@ export const getOneStation = async (req: Request, res: Response) => {
   try {
     const selectQuery = `
     SELECT
+      s.name,
       COUNT(DISTINCT j.id) AS journeys_started,
       COUNT(DISTINCT j2.id) AS journeys_ended,
       AVG(CASE WHEN j.dep_station_id = s.id THEN j.distance END) AS avg_distance_started,
@@ -43,6 +44,8 @@ export const getOneStation = async (req: Request, res: Response) => {
     WHERE
       s.id = $1
       ${selectedMonth ? 'AND EXTRACT(MONTH FROM j.departure) = $2' : ''}
+    GROUP BY
+      s.name
       `;
 
     const topRetStationsQuery = `
@@ -151,8 +154,11 @@ export const uploadStations = async (req: Request, res: Response) => {
     res.status(400).send('Error uploading file!');
   } else {
     try {
-      parseCsv(process.cwd() + '/tmp/uploads/' + req.file.filename, 'station');
-      res.status(200).send('Successful upload!');
+      const rowCount = await parseCsv(
+        process.cwd() + '/tmp/uploads/' + req.file.filename,
+        'station'
+      );
+      res.status(200).send(`Successfully uploaded ${rowCount} stations!`);
     } catch (error: any) {
       console.error(error.message);
       res.status(500).json({ error: 'Error uploading file' });
@@ -204,6 +210,7 @@ export const insertStations = async (stations: Station[]) => {
 
     client.release();
     console.log(`Successfully inserted ${rowCount} stations`);
+    return rowCount;
   } catch (error) {
     console.error(error);
   }

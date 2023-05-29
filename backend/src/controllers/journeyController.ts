@@ -109,6 +109,7 @@ export const insertJourneys = async (journeys: Journey[]) => {
     const rowCount = result.rowCount;
     client.release();
     console.log(`Succesfully inserted ${rowCount} journeys`);
+    return rowCount;
   } catch (error) {
     console.error(error);
   }

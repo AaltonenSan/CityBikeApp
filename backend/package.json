@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "dev": "cross-env NODE_ENV=development concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "test": "cross-env NODE_ENV=test jest --verbose --coverage --runInBand --detectOpenHandles"
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
