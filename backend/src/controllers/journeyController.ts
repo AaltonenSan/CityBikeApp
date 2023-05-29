@@ -4,12 +4,14 @@ import { parseCsv } from '../middleware/csvParser';
 import { Journey } from '../types';
 import pgPromise from 'pg-promise';
 import { DateTime } from 'luxon';
+import { debugLogger } from '../utils/logger';
 
 // initialize pg-promise
 const db = pgPromise();
 
 // GET all journeys and count for pagination
 export const getAllJourneys = async (req: Request, res: Response) => {
+  const client = await pool.connect();
   const rowsPerPage = 15;
   const page = req.query.page ? parseInt(req.query.page as string) : 1;
   const offset = (page - 1) * rowsPerPage;
@@ -39,7 +41,7 @@ export const getAllJourneys = async (req: Request, res: Response) => {
         SELECT COUNT(*) AS total_count 
         FROM journey
         `;
-        const countResult = await pool.query(countQuery);
+        const countResult = await client.query(countQuery);
         const lastPage = Math.ceil(
           countResult.rows[0].total_count / rowsPerPage
         );
@@ -57,26 +59,36 @@ export const getAllJourneys = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
+  } finally {
+    client.release();
   }
 };
 
 // POST csv file to server
-export const uploadJourneys = (req: Request, res: Response) => {
+export const uploadJourneys = async (req: Request, res: Response) => {
   if (!req.file) {
     res.status(400).send('No file uploaded!');
   } else if (!req.file.filename) {
     res.status(400).send('Error uploading file!');
   } else {
-    parseCsv(process.cwd() + '/tmp/uploads/' + req.file.filename, 'journey');
-    res.status(200).send('Successful upload!');
+    try {
+      const rowCount = await parseCsv(
+        process.cwd() + '/tmp/uploads/' + req.file.filename,
+        'journey'
+      );
+      res.status(200).send(`Successfully uploaded ${rowCount} journeys!`);
+    } catch (error: any) {
+      console.error(error.message);
+      res.status(500).json({ error: error.message });
+    }
   }
 };
 
 // Insert journeys from csv file to database after parsing and validating
 export const insertJourneys = async (journeys: Journey[]) => {
-  console.log('Inserting journeys to database...');
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const journeyColumnSet = new db.helpers.ColumnSet(
       [
         'departure',
@@ -107,10 +119,13 @@ export const insertJourneys = async (journeys: Journey[]) => {
 
     const result = await client.query(query);
     const rowCount = result.rowCount;
-    client.release();
-    console.log(`Succesfully inserted ${rowCount} journeys`);
+
+    debugLogger.debug(`Succesfully inserted ${rowCount} journeys`);
     return rowCount;
   } catch (error) {
     console.error(error);
+    throw new Error('Error in inserting journeys to database');
+  } finally {
+    client.release();
   }
 };

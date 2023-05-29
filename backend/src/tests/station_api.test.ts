@@ -4,6 +4,7 @@ import pool from '../services/db';
 const api = supertest(app);
 
 describe('Station API', () => {
+  // Delete all rows added by previous test run
   beforeAll(async () => {
     await pool.query('DELETE FROM STATION WHERE id > 518');
   });
@@ -20,7 +21,15 @@ describe('Station API', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.data[0].name).toEqual('Hanasaari');
+    expect(response.body.data[0].journeys_started).toEqual('58');
     expect(response.body.data.length).toBe(1);
+  });
+
+  test('GET /api/station/:id return single station calculations filtered by given month', async () => {
+    const response = await api.get('/api/station/501').query({ month: 7 });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data[0].journeys_started).toEqual('16');
   });
 
   test('GET /api/station/:id returns 404 if station not found', async () => {
@@ -31,10 +40,8 @@ describe('Station API', () => {
   });
 
   test('POST /api/station adds new station to database', async () => {
-    await pool.query('DELETE FROM STATION WHERE id = 123');
-
     const newStation = {
-      ID: 123,
+      ID: 999,
       Nimi: 'Testi',
       Namn: 'Test',
       Name: 'Test',
@@ -56,7 +63,7 @@ describe('Station API', () => {
   test('POST /api/station uploads csv file to database', async () => {
     const postResponse = await api
       .post('/api/station')
-      .attach('csvFile', 'src/tests/data/stations_test.csv', {
+      .attach('csvFile', 'src/tests/data/stations_upload_test.csv', {
         contentType: 'text/csv',
       });
     expect(postResponse.status).toBe(200);
@@ -73,7 +80,7 @@ describe('Station API', () => {
 
     await api
       .post('/api/station')
-      .attach('csvFile', 'src/tests/data/stations_test.csv', {
+      .attach('csvFile', 'src/tests/data/stations_upload_test.csv', {
         contentType: 'text/csv',
       });
 

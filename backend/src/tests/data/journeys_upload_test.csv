@@ -1,0 +1,18 @@
+Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
+2021-05-13T15:19:39,2021-05-13T15:33:30,200,Länsiterminaali,037,Töölönkatu,3633,830
+2021-05-13T15:19:38,2021-05-13T15:36:39,301,Aurinkotuulenkatu,274,Voikukantie,4796,1020
+2021-05-13T15:19:35,2021-05-13T15:37:30,121,Vilhonvuorenkatu,259,Petter Wetterin tie,3855,1070
+2021-05-13T15:19:33,2021-05-13T15:26:53,060,Kaapelitehdas,162,Leppäsuonaukio,1854,436
+2021-05-13T15:19:28,2021-05-13T15:34:26,259,Petter Wetterin tie,270,Tulisuontie,2981,895
+2021-05-13T15:19:27,2021-05-13T15:28:16,314,Lokitie,303,Leikosaarentie,1200,524
+2021-05-13T15:19:26,2021-05-13T15:33:53,009,Erottajan aukio,040,Hakaniemi (M),2530,863
+2021-05-13T15:19:24,2021-05-13T15:46:18,225,Maunula,118,Fleminginkatu,5650,1609
+2021-05-13T15:19:22,2021-05-13T15:32:15,121,Vilhonvuorenkatu,041,Ympyrätalo,1698,768
+2021-05-13T15:19:21,2021-05-13T15:45:39,212,Tunnelitie,025,Narinkka,6247,1577
+2021-05-13T15:19:21,2021-05-13T15:25:56,545,Sähkömies,553,Metsänneidonpolku,1457,391
+2021-05-13T15:19:14,2021-05-13T15:40:51,256,Herttoniemenranta,268,Porolahden koulu,3827,1296
+2021-05-13T15:19:13,2021-05-13T15:23:08,138,Arabiankatu,137,Arabian kauppakeskus,857,234
+2021-05-13T15:19:13,2021-05-13T15:41:25,067,Perämiehenkatu,090,Paciuksenkaari,5053,1328
+2021-05-13T15:19:10,2021-05-13T15:33:55,009,Erottajan aukio,040,Hakaniemi (M),2577,882
+2021-05-13T15:19:01,2021-05-13T15:26:28,067,Perämiehenkatu,030,Itämerentori,1413,443
+2021-05-13T15:18:58,2021-05-13T15:31:46,050,Melkonkuja,059,Salmisaarenranta,2706,767

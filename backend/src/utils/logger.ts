@@ -10,13 +10,27 @@ const customFormat = format.combine(
   })
 );
 
-const loggerConfig = {
+// Log api requests and responses to console
+const logger = createLogger({
   level: 'info',
   format: customFormat,
   defaultMeta: { service: 'user-service' },
   transports: [
     new transports.Console({ format: format.simple(), level: 'silly' }),
   ],
-};
+});
 
-export default createLogger(loggerConfig);
+// Log debug messages to console, but not when running tests
+const debugLogger = createLogger({
+  level: 'debug',
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new transports.Console({
+      format: format.simple(),
+      level: 'silly',
+      silent: process.env.NODE_ENV === 'test',
+    }),
+  ],
+});
+
+export { logger, debugLogger };

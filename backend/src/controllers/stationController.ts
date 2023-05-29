@@ -3,12 +3,15 @@ import pool from '../services/db';
 import { parseCsv } from '../middleware/csvParser';
 import { Station } from '../types';
 import pgPromise from 'pg-promise';
+import { debugLogger } from '../utils/logger';
 
 // initialize pg-promise
 const db = pgPromise();
 
 // GET all stations
 export const getAllStations = async (req: Request, res: Response) => {
+  const client = await pool.connect();
+
   try {
     const result = await pool.query('SELECT * FROM station;');
     if (result.rowCount > 0) {
@@ -19,6 +22,8 @@ export const getAllStations = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
+  } finally {
+    client.release();
   }
 };
 
@@ -26,6 +31,7 @@ export const getAllStations = async (req: Request, res: Response) => {
 export const getOneStation = async (req: Request, res: Response) => {
   const id = req.params.id;
   const selectedMonth = (req.query.month as string) || '';
+  const client = await pool.connect();
 
   try {
     const selectQuery = `
@@ -83,9 +89,12 @@ export const getOneStation = async (req: Request, res: Response) => {
       params.push(selectedMonth);
     }
 
-    const result = await pool.query(selectQuery, params);
-    const topRetStationsResult = await pool.query(topRetStationsQuery, params);
-    const topDepStationResult = await pool.query(topDepStationQuery, params);
+    const result = await client.query(selectQuery, params);
+    const topRetStationsResult = await client.query(
+      topRetStationsQuery,
+      params
+    );
+    const topDepStationResult = await client.query(topDepStationQuery, params);
 
     if (result.rowCount > 0) {
       res.status(200).send({
@@ -99,11 +108,15 @@ export const getOneStation = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
+  } finally {
+    client.release();
   }
 };
 
 // POST add new station to database
 export const addNewStation = async (req: Request, res: Response) => {
+  const client = await pool.connect();
+
   try {
     const {
       ID,
@@ -125,7 +138,7 @@ export const addNewStation = async (req: Request, res: Response) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING *`;
 
-    const insertResult = await pool.query(insertQuery, [
+    const insertResult = await client.query(insertQuery, [
       ID,
       Nimi,
       Namn,
@@ -141,8 +154,10 @@ export const addNewStation = async (req: Request, res: Response) => {
     ]);
     res.json(insertResult.rows[0]);
   } catch (error: any) {
-    console.log(error.message);
+    console.error(error.message);
     res.status(500).json({ error: 'Error inserting data' });
+  } finally {
+    client.release();
   }
 };
 
@@ -161,15 +176,16 @@ export const uploadStations = async (req: Request, res: Response) => {
       res.status(200).send(`Successfully uploaded ${rowCount} stations!`);
     } catch (error: any) {
       console.error(error.message);
-      res.status(500).json({ error: 'Error uploading file' });
+      res.status(500).json({ error: error.message });
     }
   }
 };
 
 // Insert stations from csv file to database after parsing
 export const insertStations = async (stations: Station[]) => {
+  const client = await pool.connect();
+
   try {
-    const client = await pool.connect();
     const stationColumnSet = new db.helpers.ColumnSet(
       [
         'id',
@@ -205,13 +221,16 @@ export const insertStations = async (stations: Station[]) => {
 
     const query =
       db.helpers.insert(values, stationColumnSet) + 'ON CONFLICT DO NOTHING';
+
     const result = await client.query(query);
     const rowCount = result.rowCount;
 
-    client.release();
-    console.log(`Successfully inserted ${rowCount} stations`);
+    debugLogger.debug(`Successfully inserted ${rowCount} stations`);
     return rowCount;
   } catch (error) {
     console.error(error);
+    throw new Error('Error inserting stations to database');
+  } finally {
+    client.release();
   }
 };

@@ -5,6 +5,7 @@ import * as fastCsv from 'fast-csv';
 import { Journey, Station } from '../types';
 import { insertJourneys } from '../controllers/journeyController';
 import { insertStations } from '../controllers/stationController';
+import { debugLogger } from '../utils/logger';
 
 // Set temporary folder to save uploaded file before processing it
 export const upload = multer({ dest: process.cwd() + '/tmp/uploads/' }).single(
@@ -29,7 +30,7 @@ export const parseCsv = (csvUrl: string, filetype: string): Promise<number> => {
     let invalidRows: number = 0;
     let validRows: number = 0;
 
-    console.log(
+    debugLogger.debug(
       filetype === 'journey'
         ? 'Parsing and validating journey csv...'
         : 'Parsing station csv...'
@@ -50,7 +51,7 @@ export const parseCsv = (csvUrl: string, filetype: string): Promise<number> => {
               await insertJourneys(collectionCsv as Journey[]);
               collectionCsv = [];
               validRows = 0;
-              console.log('Parsing and validating journey csv...');
+              debugLogger.debug('Parsing and validating journey csv...');
             }
           } else {
             invalidRows++;
@@ -63,8 +64,8 @@ export const parseCsv = (csvUrl: string, filetype: string): Promise<number> => {
         try {
           if (filetype === 'journey') {
             const rows = await insertJourneys(collectionCsv as Journey[]);
-            console.log('Journeys inserted to database.');
-            console.log(`${invalidRows} invalid rows found in csv file.`);
+            debugLogger.debug('Journeys inserted to database.');
+            debugLogger.debug(`${invalidRows} invalid rows found in csv file.`);
             rowCount = rows || 0;
           } else {
             const rows = await insertStations(collectionCsv as Station[]);

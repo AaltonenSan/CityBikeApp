@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import router from './routes/index';
 import helmet from 'helmet';
-import logger from './utils/logger';
+import { logger } from './utils/logger';
 import cors from 'cors';
 dotenv.config();
 
