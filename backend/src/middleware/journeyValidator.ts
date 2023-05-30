@@ -2,12 +2,18 @@ import { DateTime } from 'luxon';
 import { JourneyCsv } from '../types';
 
 const validateJourneyTimes = (departure: string, arrival: string): boolean => {
-  const formatString = "yyyy-MM-dd'T'HH:mm:ss";
-  const departureTime = DateTime.fromFormat(departure, formatString);
-  const arrivalTime = DateTime.fromFormat(arrival, formatString);
-  return (
-    departureTime.isValid && arrivalTime.isValid && departureTime < arrivalTime
-  );
+  try {
+    const formatString = "yyyy-MM-dd'T'HH:mm:ss";
+    const departureTime = DateTime.fromFormat(departure, formatString);
+    const arrivalTime = DateTime.fromFormat(arrival, formatString);
+    return (
+      departureTime.isValid &&
+      arrivalTime.isValid &&
+      departureTime < arrivalTime
+    );
+  } catch (error) {
+    return false;
+  }
 };
 
 const isValidInteger = (value: string, limit: number): boolean => {

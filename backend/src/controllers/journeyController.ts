@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import pool from '../services/db';
 import { parseCsv } from '../middleware/csvParser';
-import { Journey } from '../types';
+import { Journey, JourneyCsv } from '../types';
 import pgPromise from 'pg-promise';
 import { DateTime } from 'luxon';
 import { debugLogger } from '../utils/logger';
+import validateJourney from '../middleware/journeyValidator';
 
 // initialize pg-promise
 const db = pgPromise();
@@ -56,6 +57,54 @@ export const getAllJourneys = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ error: 'No journeys found' });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  } finally {
+    client.release();
+  }
+};
+
+export const addJourney = async (req: Request, res: Response) => {
+  const client = await pool.connect();
+
+  try {
+    const journey: JourneyCsv = req.body;
+    const isValid = validateJourney(journey);
+
+    if (!isValid) {
+      return res.status(400).json({ error: 'Invalid journey data' });
+    }
+
+    const {
+      departure,
+      arrival,
+      dep_station_id,
+      dep_station_name,
+      ret_station_id,
+      ret_station_name,
+      distance,
+      duration,
+    } = journey;
+
+    const query = `
+    INSERT INTO journey (departure, return_time, dep_station_id, dep_station_name, ret_station_id, ret_station_name, distance, duration)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING *`;
+
+    const values = [
+      departure,
+      arrival,
+      dep_station_id,
+      dep_station_name,
+      ret_station_id,
+      ret_station_name,
+      distance,
+      duration,
+    ];
+
+    const insertResult = await client.query(query, values);
+    res.status(200).send({ data: insertResult.rows[0] });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });

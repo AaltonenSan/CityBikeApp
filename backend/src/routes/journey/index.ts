@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  addJourney,
   getAllJourneys,
   uploadJourneys,
 } from '../../controllers/journeyController';
@@ -11,6 +12,12 @@ const journey = express.Router();
 journey.get('/', getAllJourneys);
 
 // POST upload journey csv
-journey.post('/', upload, uploadJourneys);
+journey.post('/', upload, (req, res) => {
+  if (req.file) {
+    uploadJourneys(req, res);
+  } else {
+    addJourney(req, res);
+  }
+});
 
 export default journey;

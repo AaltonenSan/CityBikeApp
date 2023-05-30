@@ -45,3 +45,22 @@ docker compose -f docker-compose.test.yml up
 ```
 npm run test
 ```
+
+## Endpoints
+
+### Journey
+
+| Endpoint          | Usage              | Params        |
+| ----------------- | ------------------ | ------------- |
+| GET api/journey/  | Get all journeys   | page: number  |
+| POST api/journey/ | Upload csv dataset | file: csvFile |
+| POST api/journey/ | Insert new journey | json: journey |
+
+## Station
+
+| Endpoint            | Usage                                     | Params                    |
+| ------------------- | ----------------------------------------- | ------------------------- |
+| GET api/station/    | Get all stations                          | -                         |
+| GET api/station/:id | Get calculated details for single station | id: number, month: string |
+| POST api/station/   | Upload csv dataset                        | file: csvFile             |
+| POST api/station/   | Insert new station                        | json: station             |

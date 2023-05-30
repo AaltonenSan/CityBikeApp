@@ -1,13 +1,13 @@
 import supertest from 'supertest';
 import app from '../app';
 import pool from '../services/db';
-import { Journey } from '../types';
+import { Journey, JourneyCsv } from '../types';
 const api = supertest(app);
 
 describe('Journey API', () => {
   // Delete all rows added by previous test runs
   beforeAll(async () => {
-    await pool.query('DELETE FROM JOURNEY WHERE id > 98');
+    await pool.query('DELETE FROM JOURNEY WHERE id > 97');
   });
 
   test('GET /api/journey returns first 15 journeys', async () => {
@@ -46,5 +46,40 @@ describe('Journey API', () => {
 
   afterAll(async () => {
     await pool.end();
+  });
+
+  test('POST /api/journey adds new journey to database', async () => {
+    const newJourney: JourneyCsv = {
+      departure: '2021-08-01T15:22:12',
+      arrival: '2021-08-01T15:34:15',
+      dep_station_id: '800',
+      dep_station_name: 'testi',
+      ret_station_id: '801',
+      ret_station_name: 'testi',
+      distance: '4181',
+      duration: '723',
+    };
+    const postResponse = await api.post('/api/journey').send(newJourney);
+
+    expect(postResponse.status).toBe(200);
+    expect(postResponse.body.data.dep_station_name).toEqual(
+      newJourney.dep_station_name
+    );
+  });
+
+  test('POST /api/journey returns 400 if journey is invalid', async () => {
+    const newJourney = {
+      departure: '2021-08-01T15:22:12',
+      arrival: '2021-08-01T15:34:15',
+      dep_station_name: 'Hanasaari',
+      ret_station_id: '507',
+      ret_station_name: 'Golfpolku',
+      distance: '4181',
+      duration: '723',
+    };
+    const postResponse = await api.post('/api/journey').send(newJourney);
+
+    expect(postResponse.status).toBe(400);
+    expect(postResponse.body.error).toBe('Invalid journey data');
   });
 });

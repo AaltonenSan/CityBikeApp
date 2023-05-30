@@ -62,6 +62,7 @@ describe('Station API', () => {
     };
     const postResponse = await api.post('/api/station').send(newStation);
 
+    expect(postResponse.status).toBe(200);
     expect(postResponse.body.id).toEqual(newStation.ID);
     expect(postResponse.body.nimi).toEqual(newStation.Nimi);
   });

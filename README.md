@@ -4,6 +4,18 @@ The aim of this project is to develop a web application that showcases informati
 
 The application is written with TypeScript and uses React for the frontend and Node + Express with PostgreSQL for the backend. Backend is dockerized for easy setup.
 
+## Assignment
+
+I got all the recommended features done and most of the additional ones too. Due to time running out some additional features were left undone.
+
+Features to improve and add:
+
+- Journey - Ordering per column
+- Journey - Searching
+- Journey - Filtering
+- Ability to add new journeys or stations from the UI
+- E2E testing
+
 ## Setup
 
 ### Download datasets

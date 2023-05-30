@@ -2,7 +2,7 @@
 
 Frontend for the City bike app with TypeScript and React. Uses axios for api calls and bootstrap for nicer UI.
 
-## Starting the app
+## Starting the app in dev mode
 
 In the frontend directory run
 
