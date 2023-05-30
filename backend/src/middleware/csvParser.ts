@@ -75,6 +75,7 @@ export const parseCsv = (csvUrl: string, filetype: string): Promise<number> => {
           resolve(rowCount);
         } catch (error: any) {
           console.error(error.message);
+          fs.unlinkSync(csvUrl);
           reject(error);
         }
       });

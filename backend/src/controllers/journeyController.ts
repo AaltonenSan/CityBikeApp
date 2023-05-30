@@ -89,6 +89,7 @@ export const insertJourneys = async (journeys: Journey[]) => {
   const client = await pool.connect();
 
   try {
+    let rowCount = 0;
     const journeyColumnSet = new db.helpers.ColumnSet(
       [
         'departure',
@@ -118,7 +119,7 @@ export const insertJourneys = async (journeys: Journey[]) => {
       db.helpers.insert(values, journeyColumnSet) + 'ON CONFLICT DO NOTHING';
 
     const result = await client.query(query);
-    const rowCount = result.rowCount;
+    rowCount += result.rowCount;
 
     debugLogger.debug(`Succesfully inserted ${rowCount} journeys`);
     return rowCount;

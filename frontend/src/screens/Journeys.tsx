@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, OverlayTrigger, Table, Tooltip } from 'react-bootstrap';
+import { Container, Table } from 'react-bootstrap';
 import PaginationControls from '../components/PaginationControls';
 import { getAllJourneys } from '../services/apiClient';
 import { Journey, JourneyResponseData } from '../types';
@@ -23,19 +23,6 @@ export default function Journeys() {
     };
     fetchData();
   }, [page, lastPage]);
-
-  type ClickableColumnType = {
-    title: string;
-    id: number;
-  };
-
-  const ClickableColumn = ({ title, id }: ClickableColumnType) => {
-    return (
-      <OverlayTrigger overlay={<Tooltip>Station details</Tooltip>}>
-        <span>{title}</span>
-      </OverlayTrigger>
-    );
-  };
 
   return (
     <Container className="mt-4 mb-4">
@@ -61,12 +48,7 @@ export default function Journeys() {
             <tr key={journey.id}>
               <td>{journey.departure}</td>
               <td>{journey.return_time}</td>
-              <td>
-                <ClickableColumn
-                  title={journey.dep_station_name}
-                  id={journey.dep_station_id}
-                />
-              </td>
+              <td>{journey.dep_station_name}</td>
               <td>{journey.ret_station_name}</td>
               <td>{distanceInKm(journey.distance)}</td>
               <td>{durationInMinutes(journey.duration)}</td>

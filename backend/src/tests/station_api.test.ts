@@ -20,7 +20,6 @@ describe('Station API', () => {
     const response = await api.get('/api/station/501');
 
     expect(response.status).toBe(200);
-    expect(response.body.data[0].name).toEqual('Hanasaari');
     expect(response.body.data[0].journeys_started).toEqual('58');
     expect(response.body.data.length).toBe(1);
   });
@@ -37,6 +36,13 @@ describe('Station API', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('No station found with id 999999');
+  });
+
+  test('GET /api/station/:id returns 400 if id is not a number', async () => {
+    const response = await api.get('/api/station/abc');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Invalid id');
   });
 
   test('POST /api/station adds new station to database', async () => {
@@ -68,10 +74,6 @@ describe('Station API', () => {
       });
     expect(postResponse.status).toBe(200);
     expect(postResponse.text).toEqual('Successfully uploaded 5 stations!');
-
-    // Verify that the stations were added to the database
-    const getResponse = await api.get('/api/station/525');
-    expect(getResponse.body.data[0].name).toEqual('Mäntyviita');
   });
 
   test('POST /api/station duplicates are not added to database', async () => {

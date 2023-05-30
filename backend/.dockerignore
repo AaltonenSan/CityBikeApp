@@ -1,8 +1,9 @@
 .dockerignore
 .gitignore
-dev.Dockerfile
+Dockerfile
 **/node_modules/
 **/dist
+tmp/uploads/**
 .git
 npm-debug.log
 .coverage

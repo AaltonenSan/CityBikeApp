@@ -31,12 +31,21 @@ export const getAllStations = async (req: Request, res: Response) => {
 export const getOneStation = async (req: Request, res: Response) => {
   const id = req.params.id;
   const selectedMonth = (req.query.month as string) || '';
-  const client = await pool.connect();
 
+  if (isNaN(Number(id))) {
+    res.status(400).json({ error: 'Invalid id' });
+    return;
+  }
+
+  const client = await pool.connect();
   try {
+    const stationExists = await client.query(
+      'SELECT * FROM station WHERE id = $1',
+      [id]
+    );
+
     const selectQuery = `
     SELECT
-      s.name,
       COUNT(DISTINCT j.id) AS journeys_started,
       COUNT(DISTINCT j2.id) AS journeys_ended,
       AVG(CASE WHEN j.dep_station_id = s.id THEN j.distance END) AS avg_distance_started,
@@ -50,8 +59,6 @@ export const getOneStation = async (req: Request, res: Response) => {
     WHERE
       s.id = $1
       ${selectedMonth ? 'AND EXTRACT(MONTH FROM j.departure) = $2' : ''}
-    GROUP BY
-      s.name
       `;
 
     const topRetStationsQuery = `
@@ -84,10 +91,7 @@ export const getOneStation = async (req: Request, res: Response) => {
     LIMIT 5;
     `;
 
-    const params = [id];
-    if (selectedMonth) {
-      params.push(selectedMonth);
-    }
+    const params = selectedMonth ? [id, selectedMonth] : [id];
 
     const result = await client.query(selectQuery, params);
     const topRetStationsResult = await client.query(
@@ -96,14 +100,16 @@ export const getOneStation = async (req: Request, res: Response) => {
     );
     const topDepStationResult = await client.query(topDepStationQuery, params);
 
-    if (result.rowCount > 0) {
+    if (stationExists.rowCount > 0) {
       res.status(200).send({
         data: result.rows,
         top_ret_stations: topRetStationsResult.rows,
         top_dep_stations: topDepStationResult.rows,
       });
     } else {
-      res.status(404).json({ error: `No station found with id ${id}` });
+      res.status(404).json({
+        error: `No station found with id ${id}`,
+      });
     }
   } catch (error) {
     console.error(error);
