@@ -1,6 +1,6 @@
 # Helsinki City Bikes
 
-The aim of this project is to develop a web application that showcases information related to journeys made using Helsinki city bikes and city bike stations. The application sources its data from provided datasets and is intended for the [pre-assignment of Solita Dev Academy](https://github.com/solita/dev-academy-2023-exercise).
+The aim of this project is to develop a web application that showcases information related to journeys made using Helsinki city bikes and city bike stations. The application sources its data from provided datasets and was intended for the [pre-assignment of Solita Dev Academy](https://github.com/solita/dev-academy-2023-exercise).
 
 The application is written with TypeScript and uses React for the frontend and Node + Express with PostgreSQL for the backend. Backend is dockerized for easy setup.
 
