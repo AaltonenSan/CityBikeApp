@@ -1,9 +1,9 @@
 # Backend
 
-Backend for the City bike app with TypeScript, Node.js, Express and Dockerized PostgreSQL. <br />
+Backend for the City Bike App with TypeScript, Node.js, Express and Dockerized PostgreSQL. <br />
 Docker and Docker Compose are needed to run the application.
 
-The docker compose also includes pgAdmin, that can be found on http://localhost:5050
+The docker compose also includes pgAdmin for manual database operations, that can be found on <http://localhost:5050>
 
 ### 3rd party packages used
 
@@ -18,13 +18,19 @@ The docker compose also includes pgAdmin, that can be found on http://localhost:
 
 ## Starting backend in dev mode
 
-### Start the database
+To start the backend in development mode you first need to install dependencies with:
+
+```
+npm install
+```
+
+Database is Dockerized PostgreSQL so let's also start that up with:
 
 ```
 docker compose up
 ```
 
-### Run app in dev mode
+Then start the actual server with:
 
 ```
 npm run dev
@@ -32,7 +38,7 @@ npm run dev
 
 ## Testing
 
-For the tests there is a docker-compose.test.yml file that will setup the test database and prepopulate it with some data.
+For tests there is a docker-compose.test.yml file that will setup the test database and prepopulate it with some data.
 
 ### First start the test database
 

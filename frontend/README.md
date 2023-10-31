@@ -1,10 +1,16 @@
 # Frontend
 
-Frontend for the City bike app with TypeScript and React. Uses axios for api calls and bootstrap for nicer UI.
+Frontend for the City Bike App with TypeScript and React. Uses axios for API calls and Bootstrap for nicer UI.
 
 ## Starting the app in dev mode
 
-In the frontend directory run
+To start the frontend in development mode you first need to install dependecies with:
+
+```
+npm install
+```
+
+Then start the application with:
 
 ```
 npm start
