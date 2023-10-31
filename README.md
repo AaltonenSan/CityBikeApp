@@ -26,7 +26,8 @@ Followed by:
 docker compose up
 ```
 
-After Docker has started the application it should be running on <localhost:3000>
+After Docker has started the application it should be running on <http://localhost:3000>
+
 Instructions on running the BE and FE separately can be found in their own README files.
 
 ### Datasets
