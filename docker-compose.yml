@@ -1,19 +1,26 @@
 version: '3.9'
 
 services:
-  backend:
+  citybike-server:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: citybike-server
     restart: always
     ports:
       - 3001:3001
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     depends_on:
       - database
+    networks:
+      - citybike-network
 
   database:
     image: 'postgres'
     restart: always
+    container_name: citybike-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -23,6 +30,24 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data/
       - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - citybike-network
+  
+  citybike-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: citybike-frontend
+    ports:
+     - "3000:3000"
+    depends_on:
+      - citybike-server
+    networks:
+      - citybike-network
+    
+networks:
+  citybike-network:
+    driver: bridge
 
 volumes:
   dbdata:

@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import pool from '../services/db';
-import { parseCsv } from '../middleware/csvParser';
-import { Journey, JourneyCsv } from '../types';
-import pgPromise from 'pg-promise';
-import { DateTime } from 'luxon';
-import { debugLogger } from '../utils/logger';
-import validateJourney from '../middleware/journeyValidator';
+import { Request, Response } from "express";
+import { DateTime } from "luxon";
+import pgPromise from "pg-promise";
+import { parseCsv } from "../middleware/csvParser";
+import validateJourney from "../middleware/journeyValidator";
+import pool from "../services/db";
+import { Journey, JourneyCsv } from "../types";
+import { debugLogger } from "../utils/logger";
 
 // initialize pg-promise
 const db = pgPromise();
@@ -30,10 +30,10 @@ export const getAllJourneys = async (req: Request, res: Response) => {
     if (result.rowCount > 0) {
       result.rows.forEach((row) => {
         row.departure = DateTime.fromJSDate(row.departure).toFormat(
-          'yyyy-MM-dd HH:mm:ss'
+          "yyyy-MM-dd HH:mm:ss"
         );
         row.return_time = DateTime.fromJSDate(row.return_time).toFormat(
-          'yyyy-MM-dd HH:mm:ss'
+          "yyyy-MM-dd HH:mm:ss"
         );
       });
       // if page is 1, also get total count of journeys
@@ -55,11 +55,11 @@ export const getAllJourneys = async (req: Request, res: Response) => {
         res.status(200).send({ data: result.rows });
       }
     } else {
-      res.status(404).json({ error: 'No journeys found' });
+      res.status(404).json({ error: "No journeys found" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: "Something went wrong" });
   } finally {
     client.release();
   }
@@ -73,7 +73,7 @@ export const addJourney = async (req: Request, res: Response) => {
     const isValid = validateJourney(journey);
 
     if (!isValid) {
-      return res.status(400).json({ error: 'Invalid journey data' });
+      return res.status(400).json({ error: "Invalid journey data" });
     }
 
     const {
@@ -107,7 +107,7 @@ export const addJourney = async (req: Request, res: Response) => {
     res.status(200).send({ data: insertResult.rows[0] });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json({ error: "Something went wrong" });
   } finally {
     client.release();
   }
@@ -116,14 +116,14 @@ export const addJourney = async (req: Request, res: Response) => {
 // POST csv file to server
 export const uploadJourneys = async (req: Request, res: Response) => {
   if (!req.file) {
-    res.status(400).send('No file uploaded!');
+    res.status(400).send("No file uploaded!");
   } else if (!req.file.filename) {
-    res.status(400).send('Error uploading file!');
+    res.status(400).send("Error uploading file!");
   } else {
     try {
       const rowCount = await parseCsv(
-        process.cwd() + '/tmp/uploads/' + req.file.filename,
-        'journey'
+        process.cwd() + "/tmp/uploads/" + req.file.filename,
+        "journey"
       );
       res.status(200).send(`Successfully uploaded ${rowCount} journeys!`);
     } catch (error: any) {
@@ -141,16 +141,16 @@ export const insertJourneys = async (journeys: Journey[]) => {
     let rowCount = 0;
     const journeyColumnSet = new db.helpers.ColumnSet(
       [
-        'departure',
-        'return_time',
-        'dep_station_id',
-        'dep_station_name',
-        'ret_station_id',
-        'ret_station_name',
-        'distance',
-        'duration',
+        "departure",
+        "return_time",
+        "dep_station_id",
+        "dep_station_name",
+        "ret_station_id",
+        "ret_station_name",
+        "distance",
+        "duration",
       ],
-      { table: 'journey' }
+      { table: "journey" }
     );
 
     const values = journeys.map((journey) => ({
@@ -165,7 +165,7 @@ export const insertJourneys = async (journeys: Journey[]) => {
     }));
 
     const query =
-      db.helpers.insert(values, journeyColumnSet) + 'ON CONFLICT DO NOTHING';
+      db.helpers.insert(values, journeyColumnSet) + "ON CONFLICT DO NOTHING";
 
     const result = await client.query(query);
     rowCount += result.rowCount;
@@ -174,7 +174,7 @@ export const insertJourneys = async (journeys: Journey[]) => {
     return rowCount;
   } catch (error) {
     console.error(error);
-    throw new Error('Error in inserting journeys to database');
+    throw new Error("Error in inserting journeys to database");
   } finally {
     client.release();
   }

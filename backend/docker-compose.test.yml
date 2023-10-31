@@ -4,6 +4,7 @@ services:
   database:
     image: 'postgres'
     restart: always
+    container_name: citybike-db-test
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
